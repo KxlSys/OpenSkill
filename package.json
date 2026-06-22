@@ -1,0 +1,21 @@
+{
+  "name": "skills",
+  "version": "1.0.0",
+  "description": "CLI to install AI agent skills from OpenSkills repositories",
+  "main": "bin/index.js",
+  "type": "commonjs",
+  "bin": {
+    "skills": "./bin/index.js"
+  },
+  "scripts": {
+    "test": "node test/test.js"
+  },
+  "keywords": [
+    "ai",
+    "agent",
+    "skills",
+    "openskills"
+  ],
+  "author": "Providence Damba",
+  "license": "MIT"
+}
