@@ -48,6 +48,10 @@ openskills/
 │   └── prompt-engineering/
 │       └── SKILL.md
 │
+├── debugging/
+│   └── openpua/
+│       └── SKILL.md
+│
 └── README.md
 ```
 
@@ -178,6 +182,7 @@ Exemples :
 - Design
 - Productivity
 - Business
+- Debugging
 
 ---
 
