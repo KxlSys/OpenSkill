@@ -1,4 +1,4 @@
-# 🚀 OpenSkills
+# 🚀 OpenSkill
 
 Une bibliothèque open source de compétences ("Skills") réutilisables pour les agents IA.
 
@@ -27,31 +27,33 @@ Une Skill peut représenter :
 ## 📂 Structure du dépôt
 
 ```text
-openskills/
+OpenSkill/
 │
-├── cybersecurity/
-│   ├── phishing-analysis/
-│   │   └── SKILL.md
+├── skills/
+│   ├── cybersecurity/
+│   │   ├── phishing-analysis/
+│   │   │   └── SKILL.md
+│   │   │
+│   │   └── ad-audit/
+│   │       └── SKILL.md
 │   │
-│   └── ad-audit/
-│       └── SKILL.md
+│   ├── sysadmin/
+│   │   └── linux-hardening/
+│   │       └── SKILL.md
+│   │
+│   ├── devops/
+│   │   └── kubernetes-review/
+│   │       └── SKILL.md
+│   │
+│   └── ai/
+│       ├── prompt-engineering/
+│       │   └── SKILL.md
+│       │
+│       └── openpua/
+│           └── SKILL.md
 │
-├── sysadmin/
-│   └── linux-hardening/
-│       └── SKILL.md
-│
-├── devops/
-│   └── kubernetes-review/
-│       └── SKILL.md
-│
-├── ai/
-│   └── prompt-engineering/
-│       └── SKILL.md
-│
-├── debugging/
-│   └── openpua/
-│       └── SKILL.md
-│
+├── registry.json
+├── package.json
 └── README.md
 ```
 
@@ -100,13 +102,13 @@ Lorsque l'utilisateur fournit un email :
 Installer l'ensemble du dépôt :
 
 ```bash
-npx skills add KxlSys/OpenSkill
+npx openskill add KxlSys/OpenSkill
 ```
 
 Installer une Skill spécifique :
 
 ```bash
-npx skills add KxlSys/OpenSkill --skill phishing-analysis
+npx openskill add KxlSys/OpenSkill --skill phishing-analysis
 ```
 
 ---
@@ -200,6 +202,27 @@ Chaque Skill publiée :
 ## 📜 Licence
 
 MIT License
+
+---
+
+## 📋 Roadmap
+
+### Phase 1
+- [x] Création du dépôt GitHub
+- [x] Ajout des premières Skills
+- [x] Standardisation des métadonnées
+- [x] Création du registry.json
+
+### Phase 2
+- [x] Développement du CLI OpenSkill
+- [ ] Publication sur NPM
+- [x] Support GitHub Repository Import
+
+### Phase 3
+- [ ] Installation via NPX (package global)
+- [ ] Recherche de Skills
+- [ ] Mise à jour automatique
+- [ ] Vérification des Skills
 
 ---
 

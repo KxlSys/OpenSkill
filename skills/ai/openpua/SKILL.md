@@ -1,19 +1,9 @@
 ---
 name: openpua
-author: tanweai
-category: debugging
-type: featured-external-skill
-website: https://openpua.ai/
-repository: https://github.com/tanweai/pua
-license: MIT
-verified: true
-tags:
-  - debugging
-  - ai-agents
-  - claude-code
-  - codex
-  - troubleshooting
-  - productivity
+version: 1.0.0
+author: OpenSkill Community
+category: ai
+description: Improve debugging persistence and reasoning quality.
 ---
 
 # OpenPUA

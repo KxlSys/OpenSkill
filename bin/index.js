@@ -17,10 +17,10 @@ const colors = {
 
 function printHelp() {
   console.log(`
-${colors.bright}${colors.cyan}🚀 OpenSkills CLI${colors.reset} - Installez des compétences pour vos agents IA
+${colors.bright}${colors.cyan}🚀 OpenSkill CLI${colors.reset} - Installez des compétences pour vos agents IA
 
 ${colors.bright}USAGE:${colors.reset}
-  npx skills add <repository> [options]
+  npx openskill add <repository> [options]
 
 ${colors.bright}ARGUMENTS:${colors.reset}
   <repository>            Dépôt GitHub (ex: KxlSys/OpenSkill), URL Git ou chemin local
@@ -30,9 +30,9 @@ ${colors.bright}OPTIONS:${colors.reset}
   -h, --help              Affiche l'aide
 
 ${colors.bright}EXEMPLES:${colors.reset}
-  npx skills add KxlSys/OpenSkill
-  npx skills add KxlSys/OpenSkill --skill phishing-analysis
-  npx skills add ./mon-depot-local
+  npx openskill add KxlSys/OpenSkill
+  npx openskill add KxlSys/OpenSkill --skill phishing-analysis
+  npx openskill add ./mon-depot-local
 `);
 }
 
@@ -70,7 +70,7 @@ function parseArgs() {
 
 async function main() {
   console.log(`${colors.bright}${colors.cyan}┌──────────────────────────────────────┐${colors.reset}`);
-  console.log(`${colors.bright}${colors.cyan}│          🚀 OPENSKILLS CLI           │${colors.reset}`);
+  console.log(`${colors.bright}${colors.cyan}│           🚀 OPENSKILL CLI           │${colors.reset}`);
   console.log(`${colors.bright}${colors.cyan}└──────────────────────────────────────┘${colors.reset}\n`);
 
   try {

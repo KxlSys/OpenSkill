@@ -1,0 +1,40 @@
+{
+  "skills": [
+    {
+      "name": "phishing-analysis",
+      "category": "cybersecurity",
+      "path": "skills/cybersecurity/phishing-analysis/SKILL.md",
+      "author": "OpenSkill Community"
+    },
+    {
+      "name": "ad-audit",
+      "category": "cybersecurity",
+      "path": "skills/cybersecurity/ad-audit/SKILL.md",
+      "author": "OpenSkill Community"
+    },
+    {
+      "name": "linux-hardening",
+      "category": "sysadmin",
+      "path": "skills/sysadmin/linux-hardening/SKILL.md",
+      "author": "OpenSkill Community"
+    },
+    {
+      "name": "kubernetes-review",
+      "category": "devops",
+      "path": "skills/devops/kubernetes-review/SKILL.md",
+      "author": "OpenSkill Community"
+    },
+    {
+      "name": "prompt-engineering",
+      "category": "ai",
+      "path": "skills/ai/prompt-engineering/SKILL.md",
+      "author": "OpenSkill Community"
+    },
+    {
+      "name": "openpua",
+      "category": "ai",
+      "path": "skills/ai/openpua/SKILL.md",
+      "author": "OpenSkill Community"
+    }
+  ]
+}

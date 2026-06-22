@@ -1,11 +1,11 @@
 {
-  "name": "skills",
+  "name": "openskill",
   "version": "1.0.0",
-  "description": "CLI to install AI agent skills from OpenSkills repositories",
+  "description": "CLI to install AI agent skills from OpenSkill repositories",
   "main": "bin/index.js",
   "type": "commonjs",
   "bin": {
-    "skills": "./bin/index.js"
+    "openskill": "./bin/index.js"
   },
   "scripts": {
     "test": "node test/test.js"

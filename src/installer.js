@@ -98,7 +98,7 @@ async function install(repo, options = {}) {
     console.log(`${colors.cyan}🔍 Recherche de compétences locales dans : ${colors.bright}${details.url}${colors.reset}`);
     sourceDir = details.url;
   } else {
-    tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'openskills-'));
+    tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'openskill-'));
     console.log(`${colors.cyan}📥 Téléchargement du dépôt : ${colors.bright}${details.url}${colors.reset}...`);
     try {
       execSync(`git clone --depth 1 "${details.url}" "${tempDir}"`, { stdio: 'ignore' });
@@ -113,7 +113,38 @@ async function install(repo, options = {}) {
   }
 
   try {
-    const allSkills = scanDirectoryForSkills(sourceDir);
+    let allSkills = [];
+    const registryPath = path.join(sourceDir, 'registry.json');
+    
+    if (fs.existsSync(registryPath)) {
+      try {
+        const registryContent = fs.readFileSync(registryPath, 'utf8');
+        const registryData = JSON.parse(registryContent);
+        if (registryData && Array.isArray(registryData.skills)) {
+          for (const item of registryData.skills) {
+            if (item.name && item.path) {
+              const fullSkillMdPath = path.join(sourceDir, item.path);
+              if (fs.existsSync(fullSkillMdPath)) {
+                allSkills.push({
+                  name: item.name,
+                  path: path.dirname(fullSkillMdPath),
+                  skillMdPath: fullSkillMdPath
+                });
+              } else {
+                console.log(`${colors.yellow}⚠️ Compétence "${item.name}" listée dans le registre mais introuvable à la destination : ${item.path}${colors.reset}`);
+              }
+            }
+          }
+        }
+      } catch (err) {
+        console.log(`${colors.yellow}⚠️ Impossible de charger registry.json : ${err.message}. Passage en mode scan automatique.${colors.reset}`);
+      }
+    }
+
+    // Fallback to directory scan if registry is missing or didn't find any skills
+    if (allSkills.length === 0) {
+      allSkills = scanDirectoryForSkills(sourceDir);
+    }
     
     if (allSkills.length === 0) {
       console.log(`\n${colors.yellow}⚠️ Aucune compétence (contenant un fichier SKILL.md) n'a été trouvée dans le dépôt.${colors.reset}`);
