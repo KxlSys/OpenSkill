@@ -58,7 +58,7 @@ openskills/
 ```yaml
 ---
 name: phishing-analysis
-author: Providence Damba
+author: Black Angel
 version: 1.0.0
 tags:
   - cybersecurity
