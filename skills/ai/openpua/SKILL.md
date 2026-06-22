@@ -4,6 +4,14 @@ version: 1.0.0
 author: OpenSkill Community
 category: ai
 description: Improve debugging persistence and reasoning quality.
+tags:
+  - debugging
+  - ai-agents
+  - claude-code
+  - codex
+  - cursor
+  - troubleshooting
+  - productivity
 ---
 
 # OpenPUA

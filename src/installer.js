@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const os = require('os');
-const { execSync } = require('child_process');
+const { execFileSync } = require('child_process');
 
 const colors = {
   reset: '\x1b[0m',
@@ -15,22 +15,30 @@ const colors = {
 };
 
 function getRepoDetails(repo) {
+  if (typeof repo !== 'string') {
+    throw new Error('Le dépôt doit être une chaîne de caractères.');
+  }
+
   // Check if it looks like a local path
   if (repo.startsWith('.') || repo.startsWith('/') || repo.startsWith('\\') || path.isAbsolute(repo)) {
     return { type: 'local', url: path.resolve(repo) };
   }
   
-  // Check if it's a Git SSH/HTTPS URL
-  if (repo.startsWith('git@') || repo.startsWith('https://') || repo.startsWith('http://')) {
-    return { type: 'git', url: repo };
-  }
-
-  // Otherwise, assume GitHub shorthand: owner/repo
-  if (repo.includes('/')) {
+  // Strict regex for GitHub shorthand: owner/repo
+  const ghShorthandRegex = /^[a-zA-Z0-9-]{1,39}\/[a-zA-Z0-9_.-]+$/;
+  if (ghShorthandRegex.test(repo)) {
     return { type: 'git', url: `https://github.com/${repo}.git` };
   }
 
-  throw new Error(`Format de dépôt non reconnu : "${repo}"`);
+  // Strict regex for Git URLs (SSH or HTTPS)
+  const gitHttpRegex = /^https?:\/\/[a-zA-Z0-9_.-]+(?:\.[a-zA-Z0-9_.-]+)+(?::\d+)?\/[a-zA-Z0-9_.-]+\/[a-zA-Z0-9_.-]+(?:\.git)?$/;
+  const gitSshRegex = /^git@[a-zA-Z0-9_.-]+:[a-zA-Z0-9_.-]+\/[a-zA-Z0-9_.-]+(?:\.git)?$/;
+
+  if (gitHttpRegex.test(repo) || gitSshRegex.test(repo)) {
+    return { type: 'git', url: repo };
+  }
+
+  throw new Error(`Format de dépôt non valide ou non reconnu : "${repo}"`);
 }
 
 function scanDirectoryForSkills(dir, results = []) {
@@ -101,7 +109,7 @@ async function install(repo, options = {}) {
     tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'openskill-'));
     console.log(`${colors.cyan}📥 Téléchargement du dépôt : ${colors.bright}${details.url}${colors.reset}...`);
     try {
-      execSync(`git clone --depth 1 "${details.url}" "${tempDir}"`, { stdio: 'ignore' });
+      execFileSync('git', ['clone', '--depth', '1', details.url, tempDir], { stdio: 'ignore' });
       sourceDir = tempDir;
     } catch (err) {
       // Clean up temp dir if exists

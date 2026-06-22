@@ -20,6 +20,25 @@ try {
   assert.strictEqual(githubRes.type, 'git');
   assert.strictEqual(githubRes.url, 'https://github.com/KxlSys/OpenSkill.git');
 
+  // Verify that invalid/malicious inputs throw errors
+  const invalidRepos = [
+    'owner/repo; rm -rf /',
+    'git@github.com:owner/repo;cmd',
+    'https://github.com/owner/repo/inject;cmd',
+    'http://safe.com/inject && cmd',
+    'owner/repo space',
+    'invalid#chars/repo',
+    12345,
+    null,
+    undefined
+  ];
+
+  for (const badRepo of invalidRepos) {
+    assert.throws(() => {
+      getRepoDetails(badRepo);
+    }, `Should throw an error for invalid repo: ${badRepo}`);
+  }
+
   console.log('✅ Test 1: getRepoDetails passed!');
 } catch (err) {
   console.error('❌ Test 1: getRepoDetails failed!', err);
