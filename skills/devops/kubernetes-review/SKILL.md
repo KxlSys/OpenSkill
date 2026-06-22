@@ -1,6 +1,6 @@
 ---
 name: kubernetes-review
-author: Providence Damba
+author: KxlSys
 version: 1.0.0
 tags:
   - devops

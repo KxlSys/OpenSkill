@@ -1,6 +1,6 @@
 ---
 name: linux-hardening
-author: Providence Damba
+author: KxlSys
 version: 1.0.0
 tags:
   - sysadmin

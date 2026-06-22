@@ -1,6 +1,6 @@
 ---
 name: ad-audit
-author: Providence Damba
+author: KxlSys
 version: 1.0.0
 tags:
   - cybersecurity
