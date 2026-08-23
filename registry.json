@@ -13,6 +13,12 @@
       "author": "OpenSkill Community"
     },
     {
+      "name": "devsecops-complete-audit",
+      "category": "cybersecurity",
+      "path": "skills/cybersecurity/devsecops-complete-audit/SKILL.md",
+      "author": "OpenSkill Community"
+    },
+    {
       "name": "linux-hardening",
       "category": "sysadmin",
       "path": "skills/sysadmin/linux-hardening/SKILL.md",

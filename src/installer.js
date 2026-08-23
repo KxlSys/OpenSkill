@@ -14,9 +14,20 @@ const colors = {
   magenta: '\x1b[35m'
 };
 
+const SKILL_NAME_REGEX = /^[a-zA-Z0-9_-]{1,100}$/;
+
+function isValidSkillName(name) {
+  return typeof name === 'string' && SKILL_NAME_REGEX.test(name);
+}
+
 function getRepoDetails(repo) {
   if (typeof repo !== 'string') {
     throw new Error('Le dépôt doit être une chaîne de caractères.');
+  }
+
+  // Reject arguments starting with flags or dangerous characters
+  if (repo.startsWith('--') || repo.startsWith(';') || repo.startsWith('|') || repo.startsWith('&')) {
+    throw new Error(`Format de dépôt non valide ou non reconnu : "${repo}"`);
   }
 
   // Check if it looks like a local path
@@ -44,7 +55,12 @@ function getRepoDetails(repo) {
 function scanDirectoryForSkills(dir, results = []) {
   if (!fs.existsSync(dir)) return results;
   
-  const items = fs.readdirSync(dir, { withFileTypes: true });
+  let items;
+  try {
+    items = fs.readdirSync(dir, { withFileTypes: true });
+  } catch (err) {
+    return results;
+  }
   
   // Check if this directory itself contains SKILL.md
   const hasSkillMd = items.some(item => item.isFile() && item.name.toLowerCase() === 'skill.md');
@@ -71,16 +87,21 @@ function scanDirectoryForSkills(dir, results = []) {
       // Ignore reading error, fallback to folder name
     }
     
-    // Fallback to directory name if name frontmatter not found
-    if (!skillName) {
-      skillName = path.basename(dir);
+    // Fallback to directory name if name frontmatter not found or invalid
+    if (!skillName || !isValidSkillName(skillName)) {
+      const baseName = path.basename(dir);
+      if (isValidSkillName(baseName)) {
+        skillName = baseName;
+      }
     }
     
-    results.push({
-      name: skillName,
-      path: dir,
-      skillMdPath
-    });
+    if (skillName && isValidSkillName(skillName)) {
+      results.push({
+        name: skillName,
+        path: dir,
+        skillMdPath
+      });
+    }
     
     return results;
   }
@@ -99,6 +120,10 @@ async function install(repo, options = {}) {
   const details = getRepoDetails(repo);
   const targetSkillName = options.skill;
 
+  if (targetSkillName && !isValidSkillName(targetSkillName)) {
+    throw new Error(`Nom de compétence non valide : "${targetSkillName}". Seuls les caractères alphanumériques, '-' et '_' sont autorisés.`);
+  }
+
   let sourceDir = '';
   let tempDir = null;
 
@@ -109,7 +134,7 @@ async function install(repo, options = {}) {
     tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'openskill-'));
     console.log(`${colors.cyan}📥 Téléchargement du dépôt : ${colors.bright}${details.url}${colors.reset}...`);
     try {
-      execFileSync('git', ['clone', '--depth', '1', details.url, tempDir], { stdio: 'ignore' });
+      execFileSync('git', ['clone', '--depth', '1', '--', details.url, tempDir], { stdio: 'ignore' });
       sourceDir = tempDir;
     } catch (err) {
       // Clean up temp dir if exists
@@ -129,9 +154,15 @@ async function install(repo, options = {}) {
         const registryContent = fs.readFileSync(registryPath, 'utf8');
         const registryData = JSON.parse(registryContent);
         if (registryData && Array.isArray(registryData.skills)) {
+          const resolvedSourceDir = path.resolve(sourceDir);
           for (const item of registryData.skills) {
-            if (item.name && item.path) {
-              const fullSkillMdPath = path.join(sourceDir, item.path);
+            if (item.name && item.path && isValidSkillName(item.name)) {
+              const fullSkillMdPath = path.resolve(sourceDir, item.path);
+              // Ensure path containment to prevent directory traversal from registry
+              if (!fullSkillMdPath.startsWith(resolvedSourceDir + path.sep) && fullSkillMdPath !== resolvedSourceDir) {
+                console.log(`${colors.yellow}⚠️ Chemin de compétence hors périmètre ignoré : ${item.path}${colors.reset}`);
+                continue;
+              }
               if (fs.existsSync(fullSkillMdPath)) {
                 allSkills.push({
                   name: item.name,
@@ -155,7 +186,7 @@ async function install(repo, options = {}) {
     }
     
     if (allSkills.length === 0) {
-      console.log(`\n${colors.yellow}⚠️ Aucune compétence (contenant un fichier SKILL.md) n'a été trouvée dans le dépôt.${colors.reset}`);
+      console.log(`\n${colors.yellow}⚠️ Aucune compétence valide (contenant un fichier SKILL.md) n'a été trouvée dans le dépôt.${colors.reset}`);
       return;
     }
 
@@ -172,13 +203,23 @@ async function install(repo, options = {}) {
 
     console.log(`${colors.cyan}⚙️ Installation des compétences...${colors.reset}\n`);
 
-    const destBaseDir = path.join(process.cwd(), '.agents', 'skills');
+    const destBaseDir = path.resolve(process.cwd(), '.agents', 'skills');
     if (!fs.existsSync(destBaseDir)) {
       fs.mkdirSync(destBaseDir, { recursive: true });
     }
 
     for (const skill of skillsToInstall) {
-      const destDir = path.join(destBaseDir, skill.name);
+      if (!isValidSkillName(skill.name)) {
+        console.log(`${colors.yellow}⚠️ Compétence avec nom non valide ignorée : ${skill.name}${colors.reset}`);
+        continue;
+      }
+
+      const destDir = path.resolve(destBaseDir, skill.name);
+      
+      // Strict path traversal containment check
+      if (!destDir.startsWith(destBaseDir + path.sep)) {
+        throw new Error(`Tentative de path traversal détectée pour la compétence : "${skill.name}"`);
+      }
       
       // Clear target directory if it exists to overwrite cleanly
       if (fs.existsSync(destDir)) {
@@ -205,5 +246,6 @@ async function install(repo, options = {}) {
 module.exports = {
   install,
   getRepoDetails,
-  scanDirectoryForSkills
+  scanDirectoryForSkills,
+  isValidSkillName
 };

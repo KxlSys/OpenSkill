@@ -34,7 +34,10 @@ OpenSkill/
 │   │   ├── phishing-analysis/
 │   │   │   └── SKILL.md
 │   │   │
-│   │   └── ad-audit/
+│   │   ├── ad-audit/
+│   │   │   └── SKILL.md
+│   │   │
+│   │   └── devsecops-complete-audit/
 │   │       └── SKILL.md
 │   │
 │   ├── sysadmin/
